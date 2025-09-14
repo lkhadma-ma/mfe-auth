@@ -36,3 +36,4 @@ jobs:
           github_token: ${{ secrets.PAT_GITHUB_TOKEN }}
           publish_dir: dist/auth/browser
 
+
