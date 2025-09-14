@@ -19,7 +19,10 @@ export const appConfig: ApplicationConfig = {
       appId: "1:1035581461246:web:f8d703acee10b12ede0baf",
       measurementId: "G-TP3VMNCCG7"
     })),
-    provideAuth(() => getAuth()),
+    provideAuth(() => {
+      console.log('Auth initialized');
+      return getAuth();
+    }),
     provideFirestore(() => getFirestore()),
   ]
 };
