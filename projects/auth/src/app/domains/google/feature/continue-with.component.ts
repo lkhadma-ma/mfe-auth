@@ -6,7 +6,10 @@ import { ContinueWithComponent } from "../ui/continue-with/continue-with.compone
   imports: [ContinueWithComponent],
   template:`
   <app-continue-with></app-continue-with>
-  `
+  `,
+  host: {
+    class: 'w-full'
+  }
 })
 export class BtnContinueWithGoogle implements OnInit {
 
