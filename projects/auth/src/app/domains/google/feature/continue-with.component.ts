@@ -8,7 +8,7 @@ import { ContinueWithComponent } from "../ui/continue-with/continue-with.compone
   <app-continue-with></app-continue-with>
   `,
   host: {
-    class: 'w-full'
+    class: 'w-full justify-center flex items-center'
   }
 })
 export class BtnContinueWithGoogle implements OnInit {

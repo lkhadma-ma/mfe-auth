@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-continue-with',
   templateUrl: './continue-with.component.html',
   host: {
-    class: 'w-full'
+    class: 'w-full justify-center flex items-center'
   }
 })
 export class ContinueWithComponent implements OnInit {
