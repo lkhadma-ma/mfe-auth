@@ -5,7 +5,7 @@ module.exports = withNativeFederation({
   name: 'auth',
 
   exposes: {
-    './Component': './projects/auth/src/app/app.ts',
+    './BtnContinueWithGoogle': './projects/auth/src/app/domains/google/feature/btn-continue-with.component.ts',
   },
 
   shared: {
@@ -17,16 +17,8 @@ module.exports = withNativeFederation({
     'rxjs/fetch',
     'rxjs/testing',
     'rxjs/webSocket',
-    // Add further packages you don't need at runtime
   ],
-
-  // Please read our FAQ about sharing libs:
-  // https://shorturl.at/jmzH0
-
   features: {
-    // New feature for more performance and avoiding
-    // issues with node libs. Comment this out to
-    // get the traditional behavior:
     ignoreUnusedDeps: true
   }
   
