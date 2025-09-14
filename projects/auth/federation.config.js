@@ -5,7 +5,7 @@ module.exports = withNativeFederation({
   name: 'auth',
 
   exposes: {
-    './BtnContinueWithGoogle': './projects/auth/src/app/domains/google/feature/btn-continue-with.component.ts',
+    './BtnContinueWithGoogle': './projects/auth/src/app/domains/google/feature/continue-with.component.ts',
   },
 
   shared: {
