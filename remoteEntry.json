@@ -3,7 +3,7 @@
   "shared": [
     {
       "packageName": "@angular/common",
-      "outFileName": "_angular_common.KvqEe1NxRC.js",
+      "outFileName": "_angular_common.D9MZ4M5J_a.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -11,7 +11,7 @@
     },
     {
       "packageName": "@angular/common/http",
-      "outFileName": "_angular_common_http.i2ZZieN7_d.js",
+      "outFileName": "_angular_common_http.MXavKo36O_.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -19,7 +19,7 @@
     },
     {
       "packageName": "@angular/core",
-      "outFileName": "_angular_core.e4rl2FsqSG.js",
+      "outFileName": "_angular_core.cj4vfP2Kqk.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -27,7 +27,7 @@
     },
     {
       "packageName": "@angular/core/primitives/di",
-      "outFileName": "_angular_core_primitives_di.s3Me2NscP-.js",
+      "outFileName": "_angular_core_primitives_di.Qlt0U1ZV0a.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -35,7 +35,7 @@
     },
     {
       "packageName": "@angular/core/primitives/signals",
-      "outFileName": "_angular_core_primitives_signals.YNyhh-mN3C.js",
+      "outFileName": "_angular_core_primitives_signals.gJMzaTFvOU.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -43,7 +43,7 @@
     },
     {
       "packageName": "@angular/core/rxjs-interop",
-      "outFileName": "_angular_core_rxjs_interop.RIsZmMAurY.js",
+      "outFileName": "_angular_core_rxjs_interop.it8N7mRGS1.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -51,7 +51,7 @@
     },
     {
       "packageName": "@angular/fire",
-      "outFileName": "_angular_fire.ICGMBpCYNp.js",
+      "outFileName": "_angular_fire.ZuVxf43QMO.js",
       "requiredVersion": "^20.0.1",
       "singleton": true,
       "strictVersion": true,
@@ -59,7 +59,7 @@
     },
     {
       "packageName": "@angular/fire/app",
-      "outFileName": "_angular_fire_app.ma2f6d0iyh.js",
+      "outFileName": "_angular_fire_app.Wrk7Cowaka.js",
       "requiredVersion": "^20.0.1",
       "singleton": true,
       "strictVersion": true,
@@ -67,7 +67,7 @@
     },
     {
       "packageName": "@angular/fire/app-check",
-      "outFileName": "_angular_fire_app_check.ItCI0NVhxE.js",
+      "outFileName": "_angular_fire_app_check.IsVrhG9-Ho.js",
       "requiredVersion": "^20.0.1",
       "singleton": true,
       "strictVersion": true,
@@ -75,7 +75,15 @@
     },
     {
       "packageName": "@angular/fire/auth",
-      "outFileName": "_angular_fire_auth.08Gika-k7A.js",
+      "outFileName": "_angular_fire_auth.-wuCGFoTEf.js",
+      "requiredVersion": "^20.0.1",
+      "singleton": true,
+      "strictVersion": true,
+      "version": "20.0.1"
+    },
+    {
+      "packageName": "@angular/fire/firestore",
+      "outFileName": "_angular_fire_firestore.ZuHvc1zfrl.js",
       "requiredVersion": "^20.0.1",
       "singleton": true,
       "strictVersion": true,
@@ -83,7 +91,7 @@
     },
     {
       "packageName": "@angular/platform-browser",
-      "outFileName": "_angular_platform_browser.jgxRFs5q8N.js",
+      "outFileName": "_angular_platform_browser.3ZWDtYhWdf.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -91,7 +99,7 @@
     },
     {
       "packageName": "@angular/router",
-      "outFileName": "_angular_router.mPScC6NhkP.js",
+      "outFileName": "_angular_router.PoMAeh4-36.js",
       "requiredVersion": "20.1.3",
       "singleton": true,
       "strictVersion": true,
@@ -99,7 +107,7 @@
     },
     {
       "packageName": "firebase/app",
-      "outFileName": "firebase_app.feX57nDeFT.js",
+      "outFileName": "firebase_app.6WKgm2SVFH.js",
       "requiredVersion": "^11.10.0",
       "singleton": true,
       "strictVersion": true,
@@ -107,7 +115,7 @@
     },
     {
       "packageName": "firebase/app-check",
-      "outFileName": "firebase_app_check.NY72UJvzwh.js",
+      "outFileName": "firebase_app_check.4YbgrTo8Pb.js",
       "requiredVersion": "^11.10.0",
       "singleton": true,
       "strictVersion": true,
@@ -115,7 +123,15 @@
     },
     {
       "packageName": "firebase/auth",
-      "outFileName": "firebase_auth.3WddzEas_n.js",
+      "outFileName": "firebase_auth.le8sTY2OPW.js",
+      "requiredVersion": "^11.10.0",
+      "singleton": true,
+      "strictVersion": true,
+      "version": "11.10.0"
+    },
+    {
+      "packageName": "firebase/firestore",
+      "outFileName": "firebase_firestore.CBibddjwsf.js",
       "requiredVersion": "^11.10.0",
       "singleton": true,
       "strictVersion": true,
@@ -123,7 +139,7 @@
     },
     {
       "packageName": "rxjs",
-      "outFileName": "rxjs.ZKmaADBtJK.js",
+      "outFileName": "rxjs.68yDKvONqs.js",
       "requiredVersion": "~7.8.0",
       "singleton": true,
       "strictVersion": true,
@@ -131,7 +147,7 @@
     },
     {
       "packageName": "rxjs/operators",
-      "outFileName": "rxjs_operators.7ZyFLAtNAV.js",
+      "outFileName": "rxjs_operators.EJyNRjLrwS.js",
       "requiredVersion": "~7.8.0",
       "singleton": true,
       "strictVersion": true,
@@ -139,7 +155,7 @@
     },
     {
       "packageName": "tslib",
-      "outFileName": "tslib.yJIHfGh_mX.js",
+      "outFileName": "tslib.LIMpcSLh2r.js",
       "requiredVersion": "^2.3.0",
       "singleton": true,
       "strictVersion": true,
@@ -150,16 +166,16 @@
       "strictVersion": false,
       "requiredVersion": "0.0.0",
       "version": "0.0.0",
-      "packageName": "@nf-internal/chunk-TJ4SG5DZ",
-      "outFileName": "chunk-TJ4SG5DZ.js"
+      "packageName": "@nf-internal/chunk-TKMKNFS6",
+      "outFileName": "chunk-TKMKNFS6.js"
     },
     {
       "singleton": false,
       "strictVersion": false,
       "requiredVersion": "0.0.0",
       "version": "0.0.0",
-      "packageName": "@nf-internal/chunk-TKMKNFS6",
-      "outFileName": "chunk-TKMKNFS6.js"
+      "packageName": "@nf-internal/chunk-PCT6XG3Z",
+      "outFileName": "chunk-PCT6XG3Z.js"
     },
     {
       "singleton": false,
@@ -213,7 +229,7 @@
   "exposes": [
     {
       "key": "./BtnContinueWithGoogle",
-      "outFileName": "BtnContinueWithGoogle-RXBTS7OY.js"
+      "outFileName": "BtnContinueWithGoogle-2HAHUOG4.js"
     }
   ]
 }
