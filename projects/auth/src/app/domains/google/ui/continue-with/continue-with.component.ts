@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { output } from '@angular/core';
 
 @Component({
   selector: 'app-continue-with',
@@ -9,7 +10,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContinueWithComponent implements OnInit {
 
-  constructor() { }
+  clickIn = output<void>();
+
+  onClick() {
+    this.clickIn.emit();
+  }
 
   ngOnInit() {
   }

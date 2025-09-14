@@ -5,6 +5,7 @@ module.exports = withNativeFederation({
   name: 'auth',
 
   exposes: {
+    //'./AuthService': './src/app/auth.service.ts',
     './BtnContinueWithGoogle': './projects/auth/src/app/domains/google/feature/continue-with.component.ts',
   },
 
