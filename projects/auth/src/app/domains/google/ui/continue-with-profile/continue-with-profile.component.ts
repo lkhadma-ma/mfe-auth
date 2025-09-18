@@ -14,6 +14,7 @@ export class ContinueWithProfileComponent implements OnInit {
     name: any;
     email: any;
     photoURL: any;
+    isCurrent: boolean;
   }>();
 
   onClick() {

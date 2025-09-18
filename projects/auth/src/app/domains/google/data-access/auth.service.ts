@@ -1,6 +1,14 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { Auth, signInWithPopup, GoogleAuthProvider, User, signOut, authState } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+
+// Export so components can use it too
+export interface StoredUser {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -8,9 +16,13 @@ export class AuthService {
 
   user$: Observable<User | null> = authState(this.auth);
 
-  // Track multiple signed-in accounts
-  accounts = signal<User[]>([]);
-  activeUser = signal<User | null>(null);
+  accounts = signal<StoredUser[]>(this.loadAccounts());
+  activeUser = signal<StoredUser | null>(this.loadActiveUser());
+
+  constructor() {
+    effect(() => this.saveAccounts(this.accounts()));
+    effect(() => this.saveActiveUser(this.activeUser()));
+  }
 
   async loginWithGoogle(): Promise<User> {
     const provider = new GoogleAuthProvider();
@@ -19,15 +31,21 @@ export class AuthService {
     const result = await signInWithPopup(this.auth, provider);
     const user = result.user;
 
-    this.addAccount(user); 
-    this.activeUser.set(user);
+    const stored: StoredUser = {
+      uid: user.uid,
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL
+    };
 
-    return user;
+    this.addAccount(stored);
+    this.activeUser.set(stored);
+
+    return user; // still return Firebase User for login flows
   }
 
-  addAccount(user: User) {
-    const exists = this.accounts().some(u => u.uid === user.uid);
-    if (!exists) {
+  addAccount(user: StoredUser) {
+    if (!this.accounts().some(u => u.uid === user.uid)) {
       this.accounts.update(arr => [...arr, user]);
     }
   }
@@ -42,7 +60,32 @@ export class AuthService {
     return signOut(this.auth);
   }
 
-  currentUser(): User | null {
+  currentUser(): StoredUser | null {
     return this.activeUser();
+  }
+
+  // --- persistence helpers ---
+  private saveAccounts(accounts: StoredUser[]) {
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+  }
+
+  private saveActiveUser(user: StoredUser | null) {
+    localStorage.setItem('activeUser', user ? JSON.stringify(user) : 'null');
+  }
+
+  private loadAccounts(): StoredUser[] {
+    try {
+      return JSON.parse(localStorage.getItem('accounts') ?? '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  private loadActiveUser(): StoredUser | null {
+    try {
+      return JSON.parse(localStorage.getItem('activeUser') ?? 'null');
+    } catch {
+      return null;
+    }
   }
 }
