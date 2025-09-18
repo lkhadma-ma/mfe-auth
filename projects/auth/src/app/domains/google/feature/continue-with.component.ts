@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '@angular/fire/auth';
 
@@ -11,14 +11,23 @@ import { AuthService } from '../data-access/auth.service';
   standalone: true,
   imports: [ContinueWithComponent, ContinueWithProfileComponent],
   template: `
-    @if (profile().email) {
-      <app-continue-with-profile 
-        (clickIn)="continueWithGoogle()" 
-        [profile]="profile()">
-      </app-continue-with-profile>
-    } @else {
-      <app-continue-with (clickIn)="continueWithGoogle()"></app-continue-with>
+    <!-- If there are accounts, list them -->
+    @if (accounts().length > 0) {
+      @for (account of accounts(); track $index) {
+        <app-continue-with-profile
+          [profile]="{
+            name: account.displayName ?? '',
+            email: account.email ?? '',
+            photoURL: account.photoURL ?? ''
+          }"
+          (clickIn)="switchTo(account)">
+        </app-continue-with-profile>
+      }
+
     }
+
+    <!-- Always show the "Add account" button -->
+    <app-continue-with (clickIn)="continueWithGoogle()"></app-continue-with>
   `,
   host: {
     class: 'mfe-auth-w-full mfe-auth-justify-center mfe-auth-flex mfe-auth-items-center'
@@ -28,33 +37,23 @@ export class BtnContinueWithGoogle implements OnInit {
   private router = inject(Router);
   private auth = inject(AuthService);
 
-  profile = signal<{ name: string; email: string; photoURL: string }>({
-    name: '',
-    email: '',
-    photoURL: ''
-  });
+  accounts = this.auth.accounts;
 
   ngOnInit(): void {
     this.auth.user$.subscribe((user: User | null) => {
       if (user) {
-        this.profile.set({
-          name: user.displayName ?? '',
-          email: user.email ?? '',
-          photoURL: user.photoURL ?? ''
-        });
-      } else {
-        this.profile.set({ name: '', email: '', photoURL: '' });
+        this.auth.addAccount(user);
       }
     });
   }
 
   async continueWithGoogle(): Promise<void> {
     const user = await this.auth.loginWithGoogle();
-    this.profile.set({
-      name: user.displayName ?? '',
-      email: user.email ?? '',
-      photoURL: user.photoURL ?? ''
-    });
+    this.router.navigate(['home']);
+  }
+
+  switchTo(user: User): void {
+    this.auth.switchAccount(user.uid);
     this.router.navigate(['home']);
   }
 }
