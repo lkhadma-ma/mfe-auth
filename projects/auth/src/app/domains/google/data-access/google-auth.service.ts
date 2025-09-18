@@ -1,17 +1,17 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
-import { Auth, signInWithPopup, GoogleAuthProvider, User, signOut, authState } from '@angular/fire/auth';
+import { Auth, signInWithPopup, GoogleAuthProvider, User, signInWithCredential, signOut, authState } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
-// Export so components can use it too
 export interface StoredUser {
   uid: string;
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
+  credential?: string; // <-- store serialized OAuth credential
 }
 
 @Injectable({ providedIn: 'root' })
-export class GoogleAuthService  {
+export class GoogleAuthService {
   private auth = inject(Auth);
 
   user$: Observable<User | null> = authState(this.auth);
@@ -31,28 +31,59 @@ export class GoogleAuthService  {
     const result = await signInWithPopup(this.auth, provider);
     const user = result.user;
 
+    // Serialize credential so we can reuse later
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const serializedCredential = credential ? JSON.stringify({
+      idToken: credential.idToken,
+      accessToken: credential.accessToken
+    }) : undefined;
+
     const stored: StoredUser = {
       uid: user.uid,
       displayName: user.displayName,
       email: user.email,
-      photoURL: user.photoURL
+      photoURL: user.photoURL,
+      credential: serializedCredential
     };
 
     this.addAccount(stored);
     this.activeUser.set(stored);
 
-    return user; // still return Firebase User for login flows
+    return user;
   }
 
   addAccount(user: StoredUser) {
-    if (!this.accounts().some(u => u.uid === user.uid)) {
+    const existingIndex = this.accounts().findIndex(u => u.uid === user.uid);
+    if (existingIndex >= 0) {
+      // update existing user with new info & credential
+      this.accounts.update(arr => {
+        const copy = [...arr];
+        copy[existingIndex] = { ...copy[existingIndex], ...user };
+        return copy;
+      });
+    } else {
+      // add new user
       this.accounts.update(arr => [...arr, user]);
     }
   }
+  
 
-  switchAccount(uid: string) {
-    const user = this.accounts().find(u => u.uid === uid) ?? null;
-    this.activeUser.set(user);
+  /** Switch accounts using stored credential */
+  async switchAccount(uid: string) {
+    const user = this.accounts().find(u => u.uid === uid);
+    if (!user) return;
+
+    if (user.credential) {
+      const credObj = JSON.parse(user.credential);
+      const credential = GoogleAuthProvider.credential(credObj.idToken, credObj.accessToken);
+      const result = await signInWithCredential(this.auth, credential);
+      this.activeUser.set(user);
+      return result.user;
+    } else {
+
+      // fallback: ask user to login via popup if credential missing
+      return this.loginWithGoogle();
+    }
   }
 
   logout() {
