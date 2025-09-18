@@ -11,7 +11,7 @@ export interface StoredUser {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class GoogleAuthService  {
   private auth = inject(Auth);
 
   user$: Observable<User | null> = authState(this.auth);

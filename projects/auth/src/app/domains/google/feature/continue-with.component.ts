@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { ContinueWithComponent } from "../ui/continue-with/continue-with.component";
 import { ContinueWithProfileComponent } from "../ui/continue-with-profile/continue-with-profile.component";
-import { AuthService, StoredUser } from '../data-access/auth.service';
+import { GoogleAuthService , StoredUser } from '../data-access/google-auth.service';
 
 @Component({
   selector: 'btn-continue-with-google',
@@ -35,7 +35,7 @@ import { AuthService, StoredUser } from '../data-access/auth.service';
 })
 export class BtnContinueWithGoogle implements OnInit {
   private router = inject(Router);
-  private auth = inject(AuthService);
+  private auth = inject(GoogleAuthService);
 
 
   label = 'Continue with Google';
