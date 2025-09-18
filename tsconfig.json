@@ -14,7 +14,11 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "es2022"
+    "module": "es2022",
+    "baseUrl": "./",
+    "paths": {
+      "@domains/*": ["projects/auth/src/app/domains/*"]
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

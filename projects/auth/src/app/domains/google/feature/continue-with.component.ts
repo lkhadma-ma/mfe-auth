@@ -1,26 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { ContinueWithComponent } from "../ui/continue-with/continue-with.component";
+import { Router } from '@angular/router';
 import { AuthService } from '../data-access/auth.service';
 
 @Component({
   selector: 'btn-continue-with-google',
   imports: [ContinueWithComponent],
   template:`
-  <app-continue-with (clickIn)="login()"></app-continue-with>
+  <app-continue-with (clickIn)="continueWithGoogle()">
+  </app-continue-with>
   `,
   host: {
-    class: 'w-full justify-center flex items-center'
+    class: 'mfe-auth-w-full mfe-auth-justify-center mfe-auth-flex mfe-auth-items-center'
   }
 })
-export class BtnContinueWithGoogle implements OnInit {
+export class BtnContinueWithGoogle {
 
-  constructor(private authService:AuthService) { }
+  constructor(
+    private router: Router,
+    private auth: AuthService
+    ) { }
 
-  ngOnInit() {
-  }
-
-  login(){
-    this.authService.loginWithGoogle();
+  async continueWithGoogle(){
+    const user = await this.auth.loginWithGoogle();
+    console.log(user);
+    this.router.navigate(['home']);
   }
 
 }

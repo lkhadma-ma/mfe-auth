@@ -1,4 +1,4 @@
-import { Component, OnInit, input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { output } from '@angular/core';
 import { ButtonComponent } from "@domains/shared/ui/button/button.component";
 

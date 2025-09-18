@@ -23,6 +23,5 @@ export const appConfig: ApplicationConfig = {
       console.log('Auth initialized');
       return getAuth();
     }),
-    provideFirestore(() => getFirestore()),
   ]
 };
