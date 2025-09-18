@@ -57,12 +57,14 @@ export class BtnContinueWithGoogle implements OnInit {
 
   async continueWithGoogle(): Promise<void> {
     const user = await this.auth.loginWithGoogle();
-    this.router.navigate(['home']);
+    if (user) {
+      this.router.navigate(['feeds']);
+    }
   }
 
   switchTo(user: StoredUser): void {
     this.auth.switchAccount(user.uid);
-    this.router.navigate(['/']);
+    this.router.navigate(['/feeds']);
   }
 
   currentUser(user: StoredUser): boolean {
