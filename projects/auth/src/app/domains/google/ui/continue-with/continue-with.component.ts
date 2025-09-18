@@ -13,6 +13,7 @@ import { ButtonComponent } from "@domains/shared/ui/button/button.component";
 export class ContinueWithComponent implements OnInit {
 
   clickIn = output<void>();
+  label = input<string>();
 
   onClick() {
     this.clickIn.emit();

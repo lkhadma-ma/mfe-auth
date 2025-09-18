@@ -26,7 +26,7 @@ import { AuthService, StoredUser } from '../data-access/auth.service';
       }
 
       <!-- Always show the "Add account" button -->
-      <app-continue-with (clickIn)="continueWithGoogle()"></app-continue-with>
+      <app-continue-with (clickIn)="continueWithGoogle()" [label]="label"></app-continue-with>
     </div>
   `,
   host: {
@@ -37,11 +37,14 @@ export class BtnContinueWithGoogle implements OnInit {
   private router = inject(Router);
   private auth = inject(AuthService);
 
+
+  label = 'Continue with Google';
   accounts = this.auth.accounts;
 
   ngOnInit(): void {
     this.auth.user$.subscribe((user) => {
       if (user) {
+        this.label = 'Continue with other account';
         this.auth.addAccount({
           uid: user.uid,
           displayName: user.displayName,
