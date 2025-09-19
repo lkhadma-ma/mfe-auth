@@ -69,9 +69,9 @@ export class GoogleAuthService {
   
 
   /** Switch accounts using stored credential */
-  async switchAccount(uid: string) {
+  async switchAccount(uid: string): Promise<User | void> {
     const user = this.accounts().find(u => u.uid === uid);
-    if (!user) return;
+    if (!user) return Promise.reject('User not found');
   
     try {
       if (user.credential) {
