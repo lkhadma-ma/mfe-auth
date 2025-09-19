@@ -1,11 +1,19 @@
 <button (click)="onClick()" type="button"
   class="mfe-auth-w-full mfe-auth-flex mfe-auth-items-center mfe-auth-bg-white mfe-auth-border mfe-auth-border-gray-300 mfe-auth-rounded-lg mfe-auth-shadow-md mfe-auth-px-6 mfe-auth-py-2 mfe-auth-text-sm mfe-auth-font-medium mfe-auth-text-gray-800 hover:mfe-auth-bg-gray-200 focus:mfe-auth-outline-none focus:mfe-auth-ring-2 focus:mfe-auth-ring-offset-2 focus:mfe-auth-ring-gray-500 mfe-auth-justify-center mfe-auth-relative">
-  <img [src]="profile()?.photoURL" [alt]="profile()?.name" alt="" class="mfe-auth-h-16 mfe-auth-w-16 mfe-auth-mr-2 mfe-auth-rounded-full object-cover" />
-  <div class="mfe-auth-flex mfe-auth-flex-col mfe-auth-items-start mfe-auth-text-left">
+
+  <!-- Image (30%) -->
+  <div class="mfe-auth-flex mfe-auth-items-center mfe-auth-justify-center mfe-auth-mr-4 basis-[30%]">
+    <img [src]="profile()?.photoURL" [alt]="profile()?.name"
+      class="mfe-auth-h-15 mfe-auth-w-15 mfe-auth-mr-2 mfe-auth-rounded-full object-cover" />
+  </div>
+
+  <!-- Text (70%) -->
+  <div class="mfe-auth-flex mfe-auth-flex-col mfe-auth-items-start mfe-auth-text-left basis-[70%]">
     <span class="mfe-auth-font-bold">{{profile()?.name}}</span>
     <span class="mfe-auth-text-sm">{{profile()?.email}}</span>
     <span class="mfe-auth-text-xs">Continue with Google</span>
   </div>
+
   @if (profile()?.isCurrent) {
     <span
       class="mfe-auth-absolute mfe-auth-top-0 mfe-auth-right-0 mfe-auth-text-xs mfe-auth-font-semibold mfe-auth-rounded-full mfe-auth-px-2 mfe-auth-py-1 mfe-auth-mt-1 mfe-auth-mr-1">
