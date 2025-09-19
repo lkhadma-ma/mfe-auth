@@ -72,19 +72,23 @@ export class GoogleAuthService {
   async switchAccount(uid: string) {
     const user = this.accounts().find(u => u.uid === uid);
     if (!user) return;
-
-    if (user.credential) {
-      const credObj = JSON.parse(user.credential);
-      const credential = GoogleAuthProvider.credential(credObj.idToken, credObj.accessToken);
-      const result = await signInWithCredential(this.auth, credential);
-      this.activeUser.set(user);
-      return result.user;
-    } else {
-
-      // fallback: ask user to login via popup if credential missing
-      return this.loginWithGoogle();
+  
+    try {
+      if (user.credential) {
+        const credObj = JSON.parse(user.credential);
+        const credential = GoogleAuthProvider.credential(credObj.idToken, credObj.accessToken);
+        const result = await signInWithCredential(this.auth, credential);
+        this.activeUser.set(user);
+        return result.user;
+      }
+    } catch (err) {
+      console.warn('Cached credential expired, falling back to popup', err);
     }
+  
+    // fallback: force user to pick account again
+    return this.loginWithGoogle();
   }
+  
 
   logout() {
     this.activeUser.set(null);
