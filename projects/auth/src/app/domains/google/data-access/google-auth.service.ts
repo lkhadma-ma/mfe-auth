@@ -82,7 +82,7 @@ export class GoogleAuthService {
         return result.user;
       }
     } catch (err) {
-      console.warn('Cached credential expired, falling back to popup', err);
+      console.warn('Cached credential expired, falling back to popup');
     }
   
     // fallback: force user to pick account again
