@@ -7,7 +7,7 @@ export interface StoredUser {
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
-  credential?: string; // <-- store serialized OAuth credential
+  credential?: string;
 }
 
 @Injectable({ providedIn: 'root' })
