@@ -123,4 +123,17 @@ export class GoogleAuthService {
       return null;
     }
   }
+
+  authorizationHeader(): string | null {
+    const user = this.activeUser();
+    if (user && user.credential) {
+      try {
+        const credObj = JSON.parse(user.credential);
+        return `Bearer ${credObj.idToken}`;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 }

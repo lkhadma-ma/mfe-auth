@@ -17,4 +17,8 @@ export class AuthService {
   get user$() {
     return this.googleAuth.user$;
   }
+
+  authorizationHeader() {
+    return this.googleAuth.authorizationHeader();
+  }
 }
