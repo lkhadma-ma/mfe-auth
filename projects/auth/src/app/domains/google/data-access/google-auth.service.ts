@@ -99,7 +99,6 @@ export class GoogleAuthService {
     return this.activeUser();
   }
 
-  // --- persistence helpers ---
   private saveAccounts(accounts: StoredUser[]) {
     localStorage.setItem('accounts', JSON.stringify(accounts));
   }
