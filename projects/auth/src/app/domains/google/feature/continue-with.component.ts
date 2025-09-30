@@ -58,7 +58,7 @@ export class BtnContinueWithGoogle implements OnInit {
   async continueWithGoogle(): Promise<void> {
     const user = await this.auth.loginWithGoogle();
     if (user) {
-      this.router.navigate(['feeds']);
+      this.router.navigate(['/lk']);
     }
   }
 
