@@ -63,8 +63,11 @@ export class BtnContinueWithGoogle implements OnInit {
   }
 
   switchTo(user: StoredUser): void {
-    this.auth.switchAccount(user.uid);
-    this.router.navigate(['/feeds']);
+    this.auth.switchAccount(user.uid).then((u) => {
+      if (u) {
+        this.router.navigate(['/lk']);
+      }
+    });
   }
 
   currentUser(user: StoredUser): boolean {
