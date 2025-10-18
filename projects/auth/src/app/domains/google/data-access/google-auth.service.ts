@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { Auth, signInWithPopup, GoogleAuthProvider, User, signInWithCredential, signOut, authState } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-
+declare var google: any;
 export interface StoredUser {
   uid: string;
   displayName: string | null;
@@ -14,6 +14,9 @@ export interface StoredUser {
 export class GoogleAuthService {
   private auth = inject(Auth);
 
+  // Your Google Cloud *Web Client ID* (not Firebase's)
+  private GSI_CLIENT_ID = "21675652332-t3tnud7hssn9qsmpka13evv46001nvn7.apps.googleusercontent.com"
+
   user$: Observable<User | null> = authState(this.auth);
 
   accounts = signal<StoredUser[]>(this.loadAccounts());
@@ -24,7 +27,7 @@ export class GoogleAuthService {
     effect(() => this.saveActiveUser(this.activeUser()));
   }
 
-  async loginWithGoogle(): Promise<User> {
+  async loginWithGoogle(): Promise<User | void> {
     const provider = new GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.setCustomParameters({
@@ -52,19 +55,13 @@ export class GoogleAuthService {
     this.addAccount(stored);
     this.activeUser.set(stored);
 
-    const refreshToken = (result as any)._tokenResponse?.refreshToken;
-    const authHeader = await this.authorizationHeader() || '';
-    if (refreshToken) {
-      await fetch('http://localhost:8081/mbe-auth/api/google/oauth', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': authHeader
-        },
-        body: JSON.stringify({ refreshToken })
-      });
-    }
-    return user;
+    this.linkGoogleDrive().then(() => {
+      return user;
+    }).catch(err => {
+      console.error('Failed to link Google Drive:', err);
+      new Error('Failed to link Google Drive');
+    });
+    
   }
 
   addAccount(user: StoredUser) {
@@ -144,6 +141,53 @@ export class GoogleAuthService {
   
     const idToken = await currentUser.getIdToken(true);
     return `Bearer ${idToken}`;
+  }
+
+  async linkGoogleDrive(): Promise<void> {
+    const authHeader = await this.authorizationHeader();
+    if (!authHeader) {
+      throw new Error("User not authenticated with Firebase.");
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        const client = google.accounts.oauth2.initCodeClient({
+          client_id: this.GSI_CLIENT_ID,
+          scope: 'https://www.googleapis.com/auth/drive.file',
+          ux_mode: 'popup',
+          callback: async (response: any) => {
+            const { code } = response;
+
+            // Send the one-time code to your NEW backend endpoint
+            const backendResponse = await fetch('http://localhost:8081/mbe-auth/api/google/exchange-code', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader // Use Firebase ID token to auth user
+              },
+              body: JSON.stringify({ authorizationCode: code })
+            });
+
+            if (!backendResponse.ok) {
+              const errorText = await backendResponse.text();
+              throw new Error(`Backend code exchange failed: ${errorText}`);
+            }
+            
+            console.log('Google Drive linked successfully!');
+            resolve();
+          },
+          error_callback: (error: any) => {
+             console.error('GSI Error:', error);
+             reject(new Error('Google Sign-In failed.'));
+          }
+        });
+
+        // Show the popup to the user
+        client.requestCode();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
   
 }
