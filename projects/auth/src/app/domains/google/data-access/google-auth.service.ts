@@ -26,8 +26,11 @@ export class GoogleAuthService {
 
   async loginWithGoogle(): Promise<User> {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-
+    provider.addScope('https://www.googleapis.com/auth/drive.file');
+    provider.setCustomParameters({
+      prompt: 'consent select_account',
+      access_type: 'offline'
+    });
     const result = await signInWithPopup(this.auth, provider);
     const user = result.user;
 
