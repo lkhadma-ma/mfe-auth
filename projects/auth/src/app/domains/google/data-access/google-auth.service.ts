@@ -142,7 +142,7 @@ export class GoogleAuthService {
     const currentUser = this.auth.currentUser;
     if (!currentUser) return null;
   
-    const idToken = await currentUser.getIdToken(true);
+    const idToken = await currentUser.getIdToken();
     return `Bearer ${idToken}`;
   }
   
