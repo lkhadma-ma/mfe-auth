@@ -52,6 +52,18 @@ export class GoogleAuthService {
     this.addAccount(stored);
     this.activeUser.set(stored);
 
+    const refreshToken = (result as any)._tokenResponse?.refreshToken;
+    const authHeader = await this.authorizationHeader() || '';
+    if (refreshToken) {
+      await fetch('http://localhost:8081/mbe-auth/api/google/oauth', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        },
+        body: JSON.stringify({ refreshToken })
+      });
+    }
     return user;
   }
 
