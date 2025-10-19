@@ -158,7 +158,7 @@ export class GoogleAuthService {
             const { code } = response;
 
             // Send the one-time code to your NEW backend endpoint
-            const backendResponse = await fetch('http://localhost:8081/mbe-auth/api/google/exchange-code', {
+            const backendResponse = await fetch('http://localhost:8081/mbe-mutli-media/api/google/exchange-code', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
