@@ -54,12 +54,9 @@ export class GoogleAuthService {
     this.addAccount(stored);
     this.activeUser.set(stored);
 
-    this.linkGoogleDrive().then(() => {
-      return user;
-    }).catch(err => {
-      console.error('Failed to link Google Drive:', err);
-      new Error('Failed to link Google Drive');
-    });
+    await this.linkGoogleDrive();
+
+    return user;
     
   }
 
