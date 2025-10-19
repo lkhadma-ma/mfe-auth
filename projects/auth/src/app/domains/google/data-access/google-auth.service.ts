@@ -29,7 +29,6 @@ export class GoogleAuthService {
 
   async loginWithGoogle(): Promise<User | void> {
     const provider = new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/drive.file');
     provider.setCustomParameters({
       prompt: 'consent select_account',
       access_type: 'offline'
@@ -163,7 +162,7 @@ export class GoogleAuthService {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': authHeader // Use Firebase ID token to auth user
+                'Authorization': authHeader
               },
               body: JSON.stringify({ authorizationCode: code })
             });
