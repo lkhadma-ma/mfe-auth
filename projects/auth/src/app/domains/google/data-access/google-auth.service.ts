@@ -54,8 +54,6 @@ export class GoogleAuthService {
     this.addAccount(stored);
     this.activeUser.set(stored);
 
-    await this.linkGoogleDrive();
-
     return user;
     
   }

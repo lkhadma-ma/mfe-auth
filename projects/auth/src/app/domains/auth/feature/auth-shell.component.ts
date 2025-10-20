@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { BtnContinueWithGoogle } from '@domains/google/feature/continue-with.component';
-import { BtnContinueWithLinkedIn } from "@domains/linkedin/feature/continue-with.component";
-import { BtnContinueWithFacebook } from "@domains/facebook/feature/continue-with.component";
+
 
 @Component({
     selector: 'mfe-auth-shell',
