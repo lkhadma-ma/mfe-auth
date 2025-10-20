@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { Auth, signInWithPopup, GoogleAuthProvider, User, signInWithCredential, signOut, authState } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 declare var google: any;
 export interface StoredUser {
@@ -13,6 +14,7 @@ export interface StoredUser {
 @Injectable({ providedIn: 'root' })
 export class GoogleAuthService {
   private auth = inject(Auth);
+  private router = inject(Router);
 
   // Your Google Cloud *Web Client ID* (not Firebase's)
   private GSI_CLIENT_ID = "21675652332-t3tnud7hssn9qsmpka13evv46001nvn7.apps.googleusercontent.com"
@@ -25,6 +27,7 @@ export class GoogleAuthService {
   constructor() {
     effect(() => this.saveAccounts(this.accounts()));
     effect(() => this.saveActiveUser(this.activeUser()));
+    this.checkGoogleDriveLinkStatus();
   }
 
   async loginWithGoogle(): Promise<User | void> {
@@ -137,51 +140,116 @@ export class GoogleAuthService {
     return `Bearer ${idToken}`;
   }
 
-  async linkGoogleDrive(): Promise<void> {
-    const authHeader = await this.authorizationHeader();
-    if (!authHeader) {
-      throw new Error("User not authenticated with Firebase.");
-    }
+  async linkGoogleDrive(): Promise<boolean> {
+    
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _) => {
       try {
         const client = google.accounts.oauth2.initCodeClient({
           client_id: this.GSI_CLIENT_ID,
           scope: 'https://www.googleapis.com/auth/drive.file',
           ux_mode: 'popup',
-          callback: async (response: any) => {
-            const { code } = response;
-
-            // Send the one-time code to your NEW backend endpoint
-            const backendResponse = await fetch('http://localhost:8081/mbe-mutli-media/api/google/exchange-code', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': authHeader
-              },
-              body: JSON.stringify({ authorizationCode: code })
-            });
-
-            if (!backendResponse.ok) {
-              const errorText = await backendResponse.text();
-              throw new Error(`Backend code exchange failed: ${errorText}`);
-            }
-            
-            console.log('Google Drive linked successfully!');
-            resolve();
-          },
-          error_callback: (error: any) => {
-             console.error('GSI Error:', error);
-             reject(new Error('Google Sign-In failed.'));
+          callback: async (response: any) => resolve(await this.exchangingCode(response)),
+          error_callback: () => {
+            resolve(false);
+            return;
           }
         });
 
         // Show the popup to the user
         client.requestCode();
       } catch (err) {
-        reject(err);
+        resolve(false);
+        return;
       }
     });
   }
   
+  async exchangingCode(response: any): Promise<boolean> {
+
+    const { code } = response;
+    const authHeader = await this.authorizationHeader();
+
+    if (!authHeader) {
+      return false; 
+    }
+
+    try {
+      const backendResponse = await fetch('http://localhost:8081/mbe-mutli-media/api/google/exchange-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        },
+        body: JSON.stringify({ authorizationCode: code })
+      });
+
+      if (!backendResponse.ok) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async isGoogleDriveLinked(): Promise<boolean> {
+    const authHeader = await this.authorizationHeader();
+    if (!authHeader) {
+      return false; 
+    }
+
+    try {
+      const backendResponse = await fetch('http://localhost:8081/mbe-mutli-media/api/google/check', {
+        method: 'GET',
+        headers: {
+          'Authorization': authHeader
+        }
+      });
+
+      if (!backendResponse.ok) {
+        return false;
+      }
+
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  async checkGoogleDriveLinkStatus(): Promise<void> {
+    
+    await this.AuthorizationHeaderWaiter();
+    const currentUser = this.auth.currentUser;
+
+    if (!currentUser) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+    
+    this.isGoogleDriveLinked().then(linked => {
+      if(!linked) {
+        this.router.navigate(['/auth/drive']);
+        return;
+      } 
+    });
+  }
+
+  async AuthorizationHeaderWaiter(): Promise<void> {
+    var retryDelay = 200, maxRetries = 10;
+    let attempts = 0;
+    let header: string | null | undefined;
+
+    do {
+      header = await this.authorizationHeader();
+      if (header) break;
+  
+      attempts++;
+      if (attempts >= maxRetries) {
+        throw new Error('Auth header not ready after max retries');
+      }
+  
+      await new Promise(r => setTimeout(r, retryDelay));
+    } while (!header);
+  }
 }

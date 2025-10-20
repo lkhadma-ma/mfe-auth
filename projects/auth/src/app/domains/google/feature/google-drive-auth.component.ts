@@ -1,6 +1,9 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { GoogleAuthService } from '../data-access/google-auth.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AlertService } from '@domains/shared/commun/alert.service';
+import { Location } from '@angular/common';
 
 export interface GoogleDriveAuthConfig {
   clientId: string;
@@ -12,7 +15,8 @@ export interface GoogleDriveAuthConfig {
   selector: 'app-google-drive-auth',
   imports: [CommonModule],
   template: `
-<div class="mfe-auth-container mfe-auth-bg-white mfe-auth-rounded-lg mfe-auth-shadow-md mfe-auth-p-6 mfe-auth-max-w-md mfe-auth-mx-auto">
+    <div class="mfe-auth-w-screen mfe-auth-h-screen mfe-auth-flex mfe-auth-items-center mfe-auth-justify-center mfe-auth-bg-gray-100 mfe-auth-p-4">
+    <div class="mfe-auth-container mfe-auth-bg-white mfe-auth-rounded-lg mfe-auth-shadow-md mfe-auth-p-6 mfe-auth-max-w-md mfe-auth-mx-auto">
   <!-- Header -->
   <div class="mfe-auth-text-center mfe-auth-mb-6">
     <div class="mfe-auth-mx-auto mfe-auth-w-12 mfe-auth-h-12 mfe-auth-bg-blue-100 mfe-auth-rounded-full mfe-auth-flex mfe-auth-items-center mfe-auth-justify-center mfe-auth-mb-4">
@@ -22,7 +26,7 @@ export interface GoogleDriveAuthConfig {
     </div>
     <h2 class="mfe-auth-text-xl mfe-auth-font-semibold mfe-auth-text-gray-900">Google Drive Access</h2>
     <p class="mfe-auth-text-gray-600 mfe-auth-mt-2">
-      Grant permission to access your Google Drive files and folders
+      To use out service please grant permission to access your Google Drive files and folders
     </p>
   </div>
 
@@ -101,6 +105,7 @@ export interface GoogleDriveAuthConfig {
     Your data is secure and we only access what you authorize
   </p>
 </div>
+    </div>
   
   `,
   styles: `
@@ -116,12 +121,35 @@ export interface GoogleDriveAuthConfig {
     }
   `
 })
-export class GoogleDriveAuthComponent {
+export class GoogleDriveAuthComponent implements OnInit, OnDestroy {
+    
     private googleAuthService = inject(GoogleAuthService);
+    private router = inject(Router);
+    private alert = inject(AlertService);
+    private location = inject(Location);
 
   
     isAuthenticating = false;
     isConnected = false;
+
+
+    async ngOnInit(): Promise<void> {
+        this.preventBackButton();
+        this.isAuthenticating = true;
+        setTimeout(async () => {
+            this.checkConnectionStatus().then(status => {
+                this.isConnected = status;
+                this.isAuthenticating = false;
+                if (this.isConnected) {
+                    setTimeout(() => {
+                        this.onDashboardClick();
+                    }, 500);
+                }else {
+                    this.alert.show("Google Drive is not connected, Please authorize access to your Google Drive to continue.", "error");
+                }
+            });
+        }, 1000);
+    }
   
     async onAuthorizeClick(): Promise<void> {
       this.isAuthenticating = true;
@@ -130,25 +158,66 @@ export class GoogleDriveAuthComponent {
         // First ensure user is authenticated with Firebase
         const currentUser = this.googleAuthService.currentUser();
         if (!currentUser) {
-          await this.googleAuthService.loginWithGoogle();
+            this.alert.show("You need to be logged in to authorize Google Drive access.", "error");
+            this.router.navigate(['/auth/login']);
         }
   
         // Now link Google Drive using GSI
-        await this.googleAuthService.linkGoogleDrive();
+        const status = await this.googleAuthService.linkGoogleDrive();
+
+        if (!status) {
+            this.alert.show("Failed to link Google Drive. Please try again.", "error");
+            throw new Error('Failed to link Google Drive');
+        }
         
         this.isConnected = true;
-        console.log('Google Drive authorization completed successfully');
+        setTimeout(() => {
+            this.onDashboardClick();
+        }, 500);
         
-      } catch (error: any) {
-        console.error('Google Drive authorization failed:', error);
+      } catch (_: any) {
+        console.error('Error during Google Drive authorization:', _);
       } finally {
         this.isAuthenticating = false;
       }
     }
   
     // Optional: Method to check current status
-    checkConnectionStatus(): void {
-      // You can implement additional logic here to check if Drive is already connected
-      // This would require extending your service to check Drive connection status
+    async checkConnectionStatus(): Promise<boolean> {
+        const status = await this.googleAuthService.isGoogleDriveLinked()
+        return status;
+    }
+
+
+    ngOnDestroy() {
+        // Re-enable back button when leaving component
+        window.onpopstate = null;
+    }
+    
+    private preventBackButton() {
+        // Push a new state to prevent immediate back navigation
+        history.pushState(null, '', location.href);
+    
+        // Listen for back button
+        window.onpopstate = (event) => {
+          // Prevent going back
+          history.pushState(null, '', location.href);
+          
+          // Optional: Show a message to user
+          this.showBackButtonBlockedMessage();
+        };
+    }
+
+    private showBackButtonBlockedMessage() {
+        // You can show a toast, alert, or custom modal
+        alert('Back navigation is disabled on this page. Use the provided button to navigate.');
+        
+        // Or use a more user-friendly approach
+        console.log('Back button pressed but blocked');
+    }
+
+    onDashboardClick(): void {
+        window.onpopstate = null;
+        this.router.navigate(['/lk']);
     }
 }
