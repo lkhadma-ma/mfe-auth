@@ -126,9 +126,7 @@ export class GoogleDriveAuthComponent implements OnInit, OnDestroy {
     private googleAuthService = inject(GoogleAuthService);
     private router = inject(Router);
     private alert = inject(AlertService);
-    private location = inject(Location);
 
-  
     isAuthenticating = false;
     isConnected = false;
 
@@ -155,14 +153,13 @@ export class GoogleDriveAuthComponent implements OnInit, OnDestroy {
       this.isAuthenticating = true;
   
       try {
-        // First ensure user is authenticated with Firebase
+
         const currentUser = this.googleAuthService.currentUser();
         if (!currentUser) {
             this.alert.show("You need to be logged in to authorize Google Drive access.", "error");
             this.router.navigate(['/auth/login']);
         }
   
-        // Now link Google Drive using GSI
         const status = await this.googleAuthService.linkGoogleDrive();
 
         if (!status) {
@@ -182,7 +179,6 @@ export class GoogleDriveAuthComponent implements OnInit, OnDestroy {
       }
     }
   
-    // Optional: Method to check current status
     async checkConnectionStatus(): Promise<boolean> {
         const status = await this.googleAuthService.isGoogleDriveLinked()
         return status;
@@ -190,29 +186,19 @@ export class GoogleDriveAuthComponent implements OnInit, OnDestroy {
 
 
     ngOnDestroy() {
-        // Re-enable back button when leaving component
         window.onpopstate = null;
     }
     
     private preventBackButton() {
-        // Push a new state to prevent immediate back navigation
         history.pushState(null, '', location.href);
-    
-        // Listen for back button
-        window.onpopstate = (event) => {
-          // Prevent going back
+        window.onpopstate = (_) => {
           history.pushState(null, '', location.href);
-          
-          // Optional: Show a message to user
           this.showBackButtonBlockedMessage();
         };
     }
 
     private showBackButtonBlockedMessage() {
-        // You can show a toast, alert, or custom modal
         alert('Back navigation is disabled on this page. Use the provided button to navigate.');
-        
-        // Or use a more user-friendly approach
         console.log('Back button pressed but blocked');
     }
 
